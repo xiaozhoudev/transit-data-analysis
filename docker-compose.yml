@@ -1,0 +1,69 @@
+# docker-compose.yml
+
+services:
+  spark-notebook:
+    #image: jupyter/all-spark-notebook:latest
+    build:
+      context: "."
+      dockerfile: ./spark/Dockerfile.dev.Dockerfile
+    container_name: my-spark-container
+    hostname: spark-notebook
+    user: '1000'
+    ports:
+      - "4040:4040"
+      - "8888:8888"
+    volumes:
+      # Maps a local directory to the container's home directory
+      - /Users/xiaozhouwen/Documents/NYU/CS-GY-6513/transit-data-analysis:/home/jovyan/
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+      - NB_USER=jovyan
+      - NB_UID=1000
+      - NB_GID=100
+      - JUPYTER_PORT=8888
+      - APACHE_SPARK_VERSION=3.5.0
+      - HADOOP_VERSION=3
+      # Note: The SPARK_OPTS from the original command were combined here
+      - SPARK_OPTS=--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
+    working_dir: /home/jovyan
+    restart: "no"
+    networks:
+      - app-network
+    labels:
+      - 'maintainer=Jupyter Project <jupyter@googlegroups.com>'
+      - 'org.opencontainers.image.ref.name=ubuntu'
+      - 'org.opencontainers.image.version=22.04'
+
+  mongodb:
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    container_name: my-mongo-db
+    hostname: mongodb
+    user: mongod
+    ports:
+      - "27017:27017"
+    volumes:
+      # Uses named volumes for persistent data storage
+      - mongodb_data:/data/db
+      - mongodb_configdb:/data/configdb
+    restart: "no"
+    networks:
+      - app-network
+    labels:
+      - 'architecture=aarch64'
+      - 'build-date=2025-04-16T09:03:22'
+      - 'description=Container configured with a standalone instance of MongoDB'
+      - 'maintainer=support@mongodb.com'
+      - 'name=MongoDB Standalone'
+      - 'summary=MongoDB Standalone Container'
+      - 'vendor=MongoDB'
+      - 'version=6.0.22'
+
+# Defines the custom network for the services
+networks:
+  app-network:
+    driver: bridge
+
+# Defines the named volumes for MongoDB
+volumes:
+  mongodb_data:
+  mongodb_configdb:
