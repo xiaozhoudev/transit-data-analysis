@@ -4,4 +4,7 @@
 .jupyter/
 .npm/
 
-.cache/matplotlib/fontlist-v330.json
+.cache/
+.~Final Project__22044.twbr
+.DS_Store
+.DS_Store

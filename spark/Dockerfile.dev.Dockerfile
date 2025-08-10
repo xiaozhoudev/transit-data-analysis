@@ -70,4 +70,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget && \
 USER ${NB_USER}
 
 # Install the requested Python packages using pip 🐍
-RUN pip install --no-cache-dir sodapy pymongo
+RUN pip install --no-cache-dir sodapy pymongo plotly folium
